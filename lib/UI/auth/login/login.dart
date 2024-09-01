@@ -1,43 +1,37 @@
-///
-///1. adb usb
-// 2. adb tcpip 5555
-// 3. adb connect 192.168.10.1:5555
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_project/UI/auth/login/login.dart';
 import 'package:firebase_project/custom_widgets/custom_button.dart';
 import 'package:firebase_project/utils/tost_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
-class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _LoginScreenState extends State<LoginScreen> {
   TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  FirebaseAuth auth = FirebaseAuth.instance;
   final _formKey = GlobalKey<FormState>();
   bool isloading = false;
-  FirebaseAuth auth = FirebaseAuth.instance;
-  TextEditingController passwordController = TextEditingController();
 
-  void signup() {
+  void login() {
     setState(() {
       isloading = true;
     });
     auth
-        .createUserWithEmailAndPassword(
+        .signInWithEmailAndPassword(
             email: emailController.text.toString().trim(),
             password: passwordController.text.toString().trim())
         .then((v) {
-      ToastPopUp().toast('Sign Up successful', Colors.green, Colors.white);
       setState(() {
         isloading = false;
       });
-      emailController.clear();
-      passwordController.clear();
+      ToastPopUp().toast('Sign In successful', Colors.green, Colors.white);
     }).onError((Error, v) {
       ToastPopUp().toast(Error.toString(), Colors.red, Colors.white);
       setState(() {
@@ -50,7 +44,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Sign Up'),
+          title: const Text('SIgn In'),
           centerTitle: true,
         ),
         body: Padding(
@@ -96,38 +90,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 SizedBox(height: 20.h),
                 CustomButton(
-                  text: 'Sign Up',
+                  text: 'Sign In',
                   height: 50.h,
                   width: 200.w,
                   isloading: isloading,
                   color: Colors.teal,
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      signup();
+                      login();
                     }
                   },
-                ),
-                SizedBox(height: 20.h),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Already have an account?',
-                      style: TextStyle(color: Colors.black),
-                    ),
-                    SizedBox(width: 5),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LoginScreen()));
-                      },
-                      child: Text('Sign In',
-                          style: TextStyle(
-                              color: Colors.blue, fontWeight: FontWeight.bold)),
-                    )
-                  ],
                 )
               ],
             ),
