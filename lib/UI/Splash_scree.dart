@@ -1,4 +1,5 @@
 import 'package:firebase_project/UI/auth/sign_up/sign_up.dart';
+import 'package:firebase_project/firebase_service/splash_service/splash_service.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -11,10 +12,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    Future.delayed(Duration(seconds: 5), () {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (_) => const SignUpScreen()));
-    });
+    SplashService().islogin(context);
 
     super.initState();
   }

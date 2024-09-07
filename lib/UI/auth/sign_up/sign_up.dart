@@ -4,6 +4,7 @@
 // 3. adb connect 192.168.10.1:5555
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_project/UI/auth/login/login.dart';
+import 'package:firebase_project/UI/home_scree/home_screen.dart';
 import 'package:firebase_project/custom_widgets/custom_button.dart';
 import 'package:firebase_project/utils/tost_popup.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +34,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
             password: passwordController.text.toString().trim())
         .then((v) {
       ToastPopUp().toast('Sign Up successful', Colors.green, Colors.white);
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+
       setState(() {
         isloading = false;
       });

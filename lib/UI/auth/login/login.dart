@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_project/UI/home_scree/home_screen.dart';
 import 'package:firebase_project/custom_widgets/custom_button.dart';
 import 'package:firebase_project/utils/tost_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -28,6 +28,8 @@ class _LoginScreenState extends State<LoginScreen> {
             email: emailController.text.toString().trim(),
             password: passwordController.text.toString().trim())
         .then((v) {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => const HomeScreen()));
       setState(() {
         isloading = false;
       });
