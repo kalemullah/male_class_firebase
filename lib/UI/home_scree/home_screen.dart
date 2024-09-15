@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:firebase_project/UI/auth/login/login.dart';
 import 'package:firebase_project/UI/auth/sign_up/sign_up.dart';
+import 'package:firebase_project/UI/home_scree/update_screen.dart';
 import 'package:firebase_project/custom_widgets/custom_button.dart';
 import 'package:firebase_project/utils/tost_popup.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,8 @@ class _HomeScreenState extends State<HomeScreen> {
   FirebaseAuth auth = FirebaseAuth.instance;
   bool isdataadded = false;
   DatabaseReference db = FirebaseDatabase.instance.ref('todo');
-  TextEditingController datacontroller = TextEditingController();
+  TextEditingController titlecontroller = TextEditingController();
+  TextEditingController descrcontroller = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,9 +59,19 @@ class _HomeScreenState extends State<HomeScreen> {
           Padding(
             padding: const EdgeInsets.all(18.0),
             child: TextField(
-              controller: datacontroller,
+              controller: titlecontroller,
               decoration: const InputDecoration(
-                  hintText: 'Enter data', border: OutlineInputBorder()),
+                  hintText: 'title', border: OutlineInputBorder()),
+              style: TextStyle(fontSize: 20.0, color: Colors.black),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: TextField(
+              maxLines: 3,
+              controller: descrcontroller,
+              decoration: const InputDecoration(
+                  hintText: 'Description', border: OutlineInputBorder()),
               style: TextStyle(fontSize: 20.0, color: Colors.black),
             ),
           ),
@@ -79,7 +91,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
 
                 String id = DateTime.now().millisecondsSinceEpoch.toString();
-                if (datacontroller.text.isEmpty) {
+                if (titlecontroller.text.isEmpty &&
+                    descrcontroller.text.isEmpty) {
                   ToastPopUp()
                       .toast('please enter data', Colors.red, Colors.white);
                   setState(() {
@@ -89,11 +102,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 } else {
                   print('this is current time ${id}');
                   db.child(id).set({
-                    'name': datacontroller.text.trim(),
-                    'age': 30,
+                    'title': titlecontroller.text.trim(),
+                    'description': descrcontroller.text.trim(),
                     'id': id
                   }).then((v) {
-                    datacontroller.clear();
+                    titlecontroller.clear();
+                    descrcontroller.clear();
                     ToastPopUp()
                         .toast('data added', Colors.green, Colors.white);
                     setState(() {
@@ -115,8 +129,23 @@ class _HomeScreenState extends State<HomeScreen> {
                   query: db,
                   itemBuilder: (context, snapshot, _, index) {
                     return ListTile(
-                      title: Text(snapshot.child('age').key.toString()),
-                      subtitle: Text(snapshot.child('name').value.toString()),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => UpdateScreen(
+                                title: snapshot.child('title').value.toString(),
+                                desc: snapshot
+                                    .child('description')
+                                    .value
+                                    .toString(),
+                                    id:snapshot.child('id').value.toString(),
+                              ),
+                            ));
+                      },
+                      title: Text(snapshot.child('title').value.toString()),
+                      subtitle:
+                          Text(snapshot.child('description').value.toString()),
                       trailing: GestureDetector(
                           onTap: () {
                             print('${snapshot.child('id').value.toString()}');
