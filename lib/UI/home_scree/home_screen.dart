@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:firebase_project/UI/auth/login/login.dart';
 import 'package:firebase_project/UI/auth/sign_up/sign_up.dart';
+import 'package:firebase_project/UI/home_scree/home2_screen.dart';
 import 'package:firebase_project/UI/home_scree/update_screen.dart';
 import 'package:firebase_project/custom_widgets/custom_button.dart';
 import 'package:firebase_project/utils/tost_popup.dart';
@@ -21,6 +22,8 @@ class _HomeScreenState extends State<HomeScreen> {
   DatabaseReference db = FirebaseDatabase.instance.ref('todo');
   TextEditingController titlecontroller = TextEditingController();
   TextEditingController descrcontroller = TextEditingController();
+  TextEditingController searchcontroller = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -124,49 +127,126 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
           ),
+          SizedBox(
+            height: 5,
+          ),
+          CustomButton(
+            height: 40.0,
+            width: 100.0,
+            color: Colors.teal,
+            text: 'Home2',
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const HomeScreen2()));
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: TextField(
+              style: TextStyle(fontSize: 20.0, color: Colors.black),
+              controller: searchcontroller,
+              decoration: InputDecoration(
+                hintText: 'search',
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (v) {
+                setState(() {});
+              },
+            ),
+          ),
           Expanded(
               child: FirebaseAnimatedList(
                   query: db,
                   itemBuilder: (context, snapshot, _, index) {
-                    return ListTile(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => UpdateScreen(
-                                title: snapshot.child('title').value.toString(),
-                                desc: snapshot
-                                    .child('description')
-                                    .value
-                                    .toString(),
-                                    id:snapshot.child('id').value.toString(),
-                              ),
-                            ));
-                      },
-                      title: Text(snapshot.child('title').value.toString()),
-                      subtitle:
-                          Text(snapshot.child('description').value.toString()),
-                      trailing: GestureDetector(
-                          onTap: () {
-                            print('${snapshot.child('id').value.toString()}');
-                            db
-                                .child(snapshot.child('id').value.toString())
-                                .remove()
-                                .then((value) {
-                              print('data deleted successfully');
-                              // print('$value');
-                              ToastPopUp().toast(
-                                  'data deleted', Colors.green, Colors.white);
-                            }).onError((Error, v) {
-                              ToastPopUp()
-                                  .toast(Error, Colors.green, Colors.white);
-                            });
-                          },
-                          child: Icon(
-                            Icons.delete,
-                            color: Colors.red,
-                          )),
-                    );
+                    if (snapshot
+                        .child('title')
+                        .value
+                        .toString()
+                        .contains(searchcontroller.text.toString())) {
+                      return ListTile(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => UpdateScreen(
+                                  title:
+                                      snapshot.child('title').value.toString(),
+                                  desc: snapshot
+                                      .child('description')
+                                      .value
+                                      .toString(),
+                                  id: snapshot.child('id').value.toString(),
+                                ),
+                              ));
+                        },
+                        title: Text(snapshot.child('title').value.toString()),
+                        subtitle: Text(
+                            snapshot.child('description').value.toString()),
+                        trailing: GestureDetector(
+                            onTap: () {
+                              print('${snapshot.child('id').value.toString()}');
+                              db
+                                  .child(snapshot.child('id').value.toString())
+                                  .remove()
+                                  .then((value) {
+                                print('data deleted successfully');
+                                // print('$value');
+                                ToastPopUp().toast(
+                                    'data deleted', Colors.green, Colors.white);
+                              }).onError((Error, v) {
+                                ToastPopUp()
+                                    .toast(Error, Colors.green, Colors.white);
+                              });
+                            },
+                            child: Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                            )),
+                      );
+                    } else if (searchcontroller.text.isEmpty) {
+                      return ListTile(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => UpdateScreen(
+                                  title:
+                                      snapshot.child('title').value.toString(),
+                                  desc: snapshot
+                                      .child('description')
+                                      .value
+                                      .toString(),
+                                  id: snapshot.child('id').value.toString(),
+                                ),
+                              ));
+                        },
+                        title: Text(snapshot.child('title').value.toString()),
+                        subtitle: Text(
+                            snapshot.child('description').value.toString()),
+                        trailing: GestureDetector(
+                            onTap: () {
+                              print('${snapshot.child('id').value.toString()}');
+                              db
+                                  .child(snapshot.child('id').value.toString())
+                                  .remove()
+                                  .then((value) {
+                                print('data deleted successfully');
+                                // print('$value');
+                                ToastPopUp().toast(
+                                    'data deleted', Colors.green, Colors.white);
+                              }).onError((Error, v) {
+                                ToastPopUp()
+                                    .toast(Error, Colors.green, Colors.white);
+                              });
+                            },
+                            child: Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                            )),
+                      );
+                    } else {
+                      return Container();
+                    }
                   }))
         ],
       ),
