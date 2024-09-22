@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_project/UI/auth/sign_up/sign_up.dart';
 import 'package:firebase_project/UI/home_scree/home_screen.dart';
 import 'package:firebase_project/custom_widgets/custom_button.dart';
 import 'package:firebase_project/utils/tost_popup.dart';
@@ -101,6 +102,20 @@ class _LoginScreenState extends State<LoginScreen> {
                     if (_formKey.currentState!.validate()) {
                       login();
                     }
+                  },
+                ),
+                SizedBox(height: 20.h),
+                CustomButton(
+                  text: 'Sign Up',
+                  height: 50.h,
+                  width: 200.w,
+                  isloading: isloading,
+                  color: Colors.teal.withOpacity(.6),
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return SignUpScreen();
+                    }));
                   },
                 )
               ],

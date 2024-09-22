@@ -19,10 +19,18 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   FirebaseAuth auth = FirebaseAuth.instance;
   bool isdataadded = false;
+  late Query query;
   DatabaseReference db = FirebaseDatabase.instance.ref('todo');
+
   TextEditingController titlecontroller = TextEditingController();
   TextEditingController descrcontroller = TextEditingController();
   TextEditingController searchcontroller = TextEditingController();
+
+  @override
+  void initState() {
+     query = db.orderByChild('uid').equalTo(auth.currentUser!.uid);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,6 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 } else {
                   print('this is current time ${id}');
                   db.child(id).set({
+                    'uid': auth.currentUser!.uid,
                     'title': titlecontroller.text.trim(),
                     'description': descrcontroller.text.trim(),
                     'id': id
@@ -156,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           Expanded(
               child: FirebaseAnimatedList(
-                  query: db,
+                  query: query,
                   itemBuilder: (context, snapshot, _, index) {
                     if (snapshot
                         .child('title')
