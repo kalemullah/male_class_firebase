@@ -4,6 +4,7 @@ import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:firebase_project/UI/auth/login/login.dart';
 import 'package:firebase_project/UI/auth/sign_up/sign_up.dart';
 import 'package:firebase_project/UI/home_scree/home2_screen.dart';
+import 'package:firebase_project/UI/home_scree/profile_screen.dart';
 import 'package:firebase_project/UI/home_scree/update_screen.dart';
 import 'package:firebase_project/custom_widgets/custom_button.dart';
 import 'package:firebase_project/utils/tost_popup.dart';
@@ -28,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-     query = db.orderByChild('uid').equalTo(auth.currentUser!.uid);
+    query = db.orderByChild('uid').equalTo(auth.currentUser!.uid);
     super.initState();
   }
 
@@ -39,6 +40,14 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Home'),
         centerTitle: true,
         actions: [
+          GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ProfileScreen()));
+              },
+              child: Icon(Icons.person)),
           GestureDetector(
               onTap: () {
                 auth.currentUser!.delete().then((v) {
