@@ -2,6 +2,7 @@
 ///1. adb usb
 // 2. adb tcpip 5555
 // 3. adb connect 192.168.10.1:5555
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_project/UI/auth/login/login.dart';
@@ -26,6 +27,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool isloading = false;
   FirebaseAuth auth = FirebaseAuth.instance;
   DatabaseReference db = FirebaseDatabase.instance.ref('Users');
+  final ref = FirebaseFirestore.instance.collection('users');
   TextEditingController passwordController = TextEditingController();
 
   void signup() {
@@ -37,7 +39,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             email: emailController.text.toString().trim(),
             password: passwordController.text.toString().trim())
         .then((v) {
-      db.child(v.user!.uid).set({
+      ref.doc(v.user!.uid).set({
         'email': emailController.text.toString().trim(),
         'name': nameController.text.toString().trim(),
         'uid': v.user!.uid,

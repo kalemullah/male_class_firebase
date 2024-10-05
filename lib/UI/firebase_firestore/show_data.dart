@@ -1,5 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_project/UI/auth/login/login.dart';
 import 'package:firebase_project/UI/firebase_firestore/add_data.dart';
+import 'package:firebase_project/UI/firebase_firestore/profile_screen.dart';
+import 'package:firebase_project/utils/tost_popup.dart';
 import 'package:flutter/material.dart';
 
 class ShowData extends StatefulWidget {
@@ -11,11 +15,38 @@ class ShowData extends StatefulWidget {
 
 class _ShowDataState extends State<ShowData> {
   @override
+  FirebaseAuth auth = FirebaseAuth.instance;
   final db = FirebaseFirestore.instance.collection('todo').snapshots();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Show Data'),
+        centerTitle: true,
+        actions: [
+          GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ProfileScreen2()));
+              },
+              child: Icon(Icons.person)),
+          GestureDetector(
+              onTap: () {
+                auth.signOut().then((v) {
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (_) => const LoginScreen()));
+                }).onError((Error, v) {
+                  print(Error);
+                  ToastPopUp()
+                      .toast(Error.toString(), Colors.green, Colors.white);
+                });
+              },
+              child: Icon(Icons.logout))
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context,
