@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_project/custom_widgets/custom_button.dart';
 import 'package:firebase_project/utils/tost_popup.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AddData extends StatefulWidget {
   const AddData({super.key});
@@ -17,9 +21,26 @@ class _AddDataState extends State<AddData> {
   FirebaseFirestore db = FirebaseFirestore.instance;
   TextEditingController descrcontroller = TextEditingController();
   bool isdataadded = false;
+  XFile? image;
+  File? imageFile;
+  String url = '';
+  void pickImage() async {
+    final ImagePicker _picker = ImagePicker();
+    image = await _picker.pickImage(source: ImageSource.camera);
+    print('image path ${image!.path}');
+    if (image == null) {
+      return;
+    } else {
+      setState(() {
+        imageFile = File(image!.path);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
@@ -54,6 +75,22 @@ class _AddDataState extends State<AddData> {
           SizedBox(
             height: 20.0,
           ),
+          GestureDetector(
+            onTap: () {
+              pickImage();
+            },
+            child: image != null
+                ? Image.file(
+                    File(image!.path),
+                    height: 200.0,
+                    width: 200.0,
+                  )
+                : CircleAvatar(
+                    backgroundColor: Colors.grey,
+                    radius: 100.0,
+                    backgroundImage: AssetImage('assets/shoes3.jpg'),
+                  ),
+          ),
           SizedBox(
             height: 20.0,
           ),
@@ -64,10 +101,23 @@ class _AddDataState extends State<AddData> {
               height: 50.0,
               width: 300.0,
               color: Colors.teal,
-              onPressed: () {
+              onPressed: () async {
                 setState(() {
                   isdataadded = true;
                 });
+
+                if (imageFile != null) {
+                  String fileName =
+                      DateTime.now().millisecondsSinceEpoch.toString();
+                  Reference firebaseStorageRef =
+                      FirebaseStorage.instance.ref().child('images/$fileName');
+                  // firebaseStorageRef.putFile(imageFile!);
+                  UploadTask uploadTask =
+                      firebaseStorageRef.putFile(imageFile!);
+                  await uploadTask;
+
+                  url = await firebaseStorageRef.getDownloadURL();
+                }
 
                 String id = DateTime.now().millisecondsSinceEpoch.toString();
                 if (titlecontroller.text.isEmpty &&
@@ -84,7 +134,9 @@ class _AddDataState extends State<AddData> {
                     "title": titlecontroller.text.toString().trim(),
                     'description': descrcontroller.text.toString().trim(),
                     'id': id,
+                    'image': url
                   }).then((v) {
+                    url = '';
                     titlecontroller.clear();
                     descrcontroller.clear();
                     ToastPopUp()

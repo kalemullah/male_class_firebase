@@ -17,6 +17,10 @@ class _ShowDataState extends State<ShowData> {
   @override
   FirebaseAuth auth = FirebaseAuth.instance;
   final db = FirebaseFirestore.instance.collection('todo').snapshots();
+  final ref = FirebaseFirestore.instance
+      .collection('todo')
+      .where('age', isGreaterThan: 20)
+      .get();
 
   @override
   Widget build(BuildContext context) {
@@ -68,20 +72,23 @@ class _ShowDataState extends State<ShowData> {
                         itemCount: snapshot.data!.docs.length,
                         itemBuilder: (context, index) {
                           return ListTile(
-                            leading: GestureDetector(
-                                onTap: () {
-                                  // snapshot.data!.docs[index].reference.update({
-                                  //   'title': "test title",
-                                  //   "description": "updated data"
-                                  // });
-                                  FirebaseFirestore.instance
-                                      .collection('todo')
-                                      .doc(snapshot.data!.docs[index]['id'])
-                                      .update({
-                                    'title': "this is for testing only"
-                                  });
-                                },
-                                child: Icon(Icons.update)),
+                            // leading: GestureDetector(
+                            //     onTap: () {
+                            //       // snapshot.data!.docs[index].reference.update({
+                            //       //   'title': "test title",
+                            //       //   "description": "updated data"
+                            //       // });
+                            //       FirebaseFirestore.instance
+                            //           .collection('todo')
+                            //           .doc(snapshot.data!.docs[index]['id'])
+                            //           .update({
+                            //         'title': "this is for testing only"
+                            //       });
+                            //     },
+                            //     child: Icon(Icons.update)),
+
+                            leading: Image.network(
+                                snapshot.data!.docs[index]['image']),
                             title: Text(snapshot.data!.docs[index]['title']),
                             subtitle:
                                 Text(snapshot.data?.docs[index]['description']),
@@ -100,7 +107,33 @@ class _ShowDataState extends State<ShowData> {
                 } else {
                   return SizedBox();
                 }
-              })
+              }),
+          FutureBuilder(
+            future: ref,
+            builder:
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                return Expanded(
+                  child: ListView.builder(
+                      itemCount: snapshot.data!.docs.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          onTap: () {
+                            setState(() {});
+                          },
+                          leading: Image.network(
+                              snapshot.data!.docs[index]['image']),
+                          title: Text(snapshot.data!.docs[index]['title']),
+                          subtitle:
+                              Text(snapshot.data!.docs[index]['description']),
+                        );
+                      }),
+                );
+              } else {
+                return CircularProgressIndicator();
+              }
+            },
+          )
         ],
       ),
     );

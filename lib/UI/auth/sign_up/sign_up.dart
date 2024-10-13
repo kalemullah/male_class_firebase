@@ -7,7 +7,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_project/UI/auth/login/login.dart';
 import 'package:firebase_project/UI/firebase_firestore/show_data.dart';
-import 'package:firebase_project/UI/home_scree/home_screen.dart';
 import 'package:firebase_project/custom_widgets/custom_button.dart';
 import 'package:firebase_project/utils/tost_popup.dart';
 import 'package:flutter/material.dart';
