@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_project/UI/auth/login/login.dart';
+import 'package:firebase_project/UI/chat_screen/chat_screen.dart';
 import 'package:firebase_project/UI/firebase_firestore/add_data.dart';
 import 'package:firebase_project/UI/firebase_firestore/profile_screen.dart';
 import 'package:firebase_project/utils/tost_popup.dart';
@@ -16,11 +17,10 @@ class ShowData extends StatefulWidget {
 class _ShowDataState extends State<ShowData> {
   @override
   FirebaseAuth auth = FirebaseAuth.instance;
-  final db = FirebaseFirestore.instance.collection('todo').snapshots();
-  final ref = FirebaseFirestore.instance
-      .collection('todo')
-      .where('age', isGreaterThan: 20)
-      .get();
+  final db = FirebaseFirestore.instance
+      .collection('users')
+      .where('uid', isNotEqualTo: FirebaseAuth.instance.currentUser!.uid)
+      .snapshots();
 
   @override
   Widget build(BuildContext context) {
@@ -72,35 +72,24 @@ class _ShowDataState extends State<ShowData> {
                         itemCount: snapshot.data!.docs.length,
                         itemBuilder: (context, index) {
                           return ListTile(
-                            // leading: GestureDetector(
-                            //     onTap: () {
-                            //       // snapshot.data!.docs[index].reference.update({
-                            //       //   'title': "test title",
-                            //       //   "description": "updated data"
-                            //       // });
-                            //       FirebaseFirestore.instance
-                            //           .collection('todo')
-                            //           .doc(snapshot.data!.docs[index]['id'])
-                            //           .update({
-                            //         'title': "this is for testing only"
-                            //       });
-                            //     },
-                            //     child: Icon(Icons.update)),
-
-                            leading: Image.network(
-                                snapshot.data!.docs[index]['image']),
-                            title: Text(snapshot.data!.docs[index]['title']),
-                            subtitle:
-                                Text(snapshot.data?.docs[index]['description']),
+                            title: Text(snapshot.data!.docs[index]['name']),
+                            subtitle: Text(snapshot.data?.docs[index]['email']),
                             trailing: GestureDetector(
                                 onTap: () {
-                                  snapshot.data!.docs[index].reference.delete();
-                                  FirebaseFirestore.instance
-                                      .collection('todo')
-                                      .doc('1')
-                                      .delete();
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ChatScreen(
+                                                recieverName: snapshot
+                                                    .data!.docs[index]['name'],
+                                                recieverId: snapshot
+                                                    .data!.docs[index]['uid'],
+                                              )));
                                 },
-                                child: Icon(Icons.delete)),
+                                child: Icon(
+                                  Icons.message,
+                                  color: Colors.teal,
+                                )),
                           );
                         }),
                   );
@@ -108,32 +97,6 @@ class _ShowDataState extends State<ShowData> {
                   return SizedBox();
                 }
               }),
-          FutureBuilder(
-            future: ref,
-            builder:
-                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                return Expanded(
-                  child: ListView.builder(
-                      itemCount: snapshot.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          onTap: () {
-                            setState(() {});
-                          },
-                          leading: Image.network(
-                              snapshot.data!.docs[index]['image']),
-                          title: Text(snapshot.data!.docs[index]['title']),
-                          subtitle:
-                              Text(snapshot.data!.docs[index]['description']),
-                        );
-                      }),
-                );
-              } else {
-                return CircularProgressIndicator();
-              }
-            },
-          )
         ],
       ),
     );

@@ -43,6 +43,7 @@ dependencies:
   flutter_screenutil: ^5.9.3
   fluttertoast: ^8.2.8
   image_picker: ^1.1.2
+  chat_bubbles: ^1.6.0
 
 dev_dependencies:
   flutter_test:

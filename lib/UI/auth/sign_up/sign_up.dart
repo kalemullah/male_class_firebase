@@ -26,7 +26,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool isloading = false;
   FirebaseAuth auth = FirebaseAuth.instance;
   DatabaseReference db = FirebaseDatabase.instance.ref('Users');
-  final ref = FirebaseFirestore.instance.collection('users');
+  final  ref = FirebaseFirestore.instance.collection('users');
   TextEditingController passwordController = TextEditingController();
 
   void signup() {

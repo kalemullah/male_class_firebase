@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_project/UI/auth/sign_up/sign_up.dart';
 import 'package:firebase_project/UI/firebase_firestore/show_data.dart';
-import 'package:firebase_project/UI/home_scree/home_screen.dart';
 import 'package:flutter/material.dart';
 
 class SplashService {

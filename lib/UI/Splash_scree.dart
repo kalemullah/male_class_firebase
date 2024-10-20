@@ -1,4 +1,3 @@
-import 'package:firebase_project/UI/auth/sign_up/sign_up.dart';
 import 'package:firebase_project/firebase_service/splash_service/splash_service.dart';
 import 'package:flutter/material.dart';
 
