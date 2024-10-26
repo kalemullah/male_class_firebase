@@ -15,6 +15,8 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   TextEditingController messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+
   String combineId(senderid, recieverid) {
     // String combineId = senderid + "-" + recieverid;
     List<String> ids = [senderid, recieverid];
@@ -23,6 +25,25 @@ class _ChatScreenState extends State<ChatScreen> {
 
     String joinid = ids.join("_");
     return joinid;
+  }
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToBottom();
+    });
+
+    super.initState();
+  }
+
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 10),
+        curve: Curves.easeOut,
+      );
+    }
   }
 
   sendMessage() {
@@ -39,6 +60,8 @@ class _ChatScreenState extends State<ChatScreen> {
       'lastmessage': messageController.text,
       'combinedId': combineid,
       'timestamp': DateTime.now().millisecondsSinceEpoch,
+      'sendername': 'asd',
+      'recievername': widget.recieverName
     });
 
     String chatid = DateTime.now().millisecondsSinceEpoch.toString();
@@ -53,6 +76,9 @@ class _ChatScreenState extends State<ChatScreen> {
       'chatid': chatid,
       'timestamp': DateTime.now().millisecondsSinceEpoch,
     }).then((v) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToBottom();
+      });
       print('message sent');
       messageController.clear();
     }).onError((error, stackTrace) {
@@ -87,8 +113,11 @@ class _ChatScreenState extends State<ChatScreen> {
                       child: CircularProgressIndicator(),
                     );
                   }
-
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    _scrollToBottom();
+                  });
                   return ListView.builder(
+                      controller: _scrollController,
                       itemCount: snapshot.data!.docs.length,
                       itemBuilder: (context, index) {
                         return BubbleSpecialThree(

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_project/UI/auth/login/login.dart';
 import 'package:firebase_project/UI/chat_screen/chat_screen.dart';
+import 'package:firebase_project/UI/chat_screen/conversation.dart';
 import 'package:firebase_project/UI/firebase_firestore/add_data.dart';
 import 'package:firebase_project/UI/firebase_firestore/profile_screen.dart';
 import 'package:firebase_project/utils/tost_popup.dart';
@@ -97,6 +98,26 @@ class _ShowDataState extends State<ShowData> {
                   return SizedBox();
                 }
               }),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const Conversation()));
+            },
+            child: Container(
+              height: 50,
+              width: 130,
+              decoration: BoxDecoration(
+                color: Colors.teal,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Center(child: Text('Conversation')),
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          )
         ],
       ),
     );
