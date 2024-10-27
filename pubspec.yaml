@@ -44,6 +44,7 @@ dependencies:
   fluttertoast: ^8.2.8
   image_picker: ^1.1.2
   chat_bubbles: ^1.6.0
+  provider: ^6.1.2
 
 dev_dependencies:
   flutter_test:

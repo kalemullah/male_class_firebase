@@ -37,6 +37,11 @@ class _AddDataState extends State<AddData> {
     }
   }
 
+@override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
